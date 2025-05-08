@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Opiniones sobre Duolingo</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #eaf8f7;
+      margin: 0;
+      padding: 30px;
+      display: flex;
+      justify-content: center;
+    }
+    .card {
+      background-color: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      max-width: 600px;
+      width: 100%;
+    }
+    h1 {
+      text-align: center;
+      color: #58cc02;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    select, textarea, input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #58cc02;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 20px;
+      width: 100%;
+      font-size: 16px;
+    }
+    .result {
+      margin-top: 20px;
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h1>¿Qué opinas de Duolingo?</h1>
+  <label for="name">Tu nombre:</label>
+  <input type="text" id="name" placeholder="Escribe tu nombre">
+
+  <label for="experience">¿Cómo ha sido tu experiencia?</label>
+  <select id="experience">
+    <option value="">Selecciona una opción</option>
+    <option value="excelente">Excelente</option>
+    <option value="buena">Buena</option>
+    <option value="regular">Regular</option>
+    <option value="mala">Mala</option>
+  </select>
+
+  <label for="comment">¿Te ha ayudado a aprender un idioma?</label>
+  <textarea id="comment" rows="4" placeholder="Escribe tu opinión aquí..."></textarea>
+
+  <button onclick="enviar()">Enviar Opinión</button>
+
+  <div class="result" id="result"></div>
+</div>
+
+<script>
+  function enviar() {
+    const name = document.getElementById("name").value.trim();
+    const exp = document.getElementById("experience").value;
+    const comment = document.getElementById("comment").value.trim();
+    const resultDiv = document.getElementById("result");
+
+    if (!name || !exp || !comment) {
+      resultDiv.textContent = "Por favor, completa todos los campos.";
+      resultDiv.style.color = "red";
+      return;
+    }
+
+    resultDiv.style.color = "green";
+    resultDiv.innerHTML = `¡Gracias, <strong>${name}</strong>! Tu opinión "<em>${exp}</em>" ha sido registrada.<br><br>Tu comentario: "${comment}"`;
+  }
+</script>
+
+</body>
+</html>

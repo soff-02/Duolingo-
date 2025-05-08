@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mini Duolingo</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #e6ffed;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 100%;
+    }
+    h2 {
+      color: #1abc6c;
+    }
+    .language, .option {
+      background: #f7f7f7;
+      padding: 12px;
+      border-radius: 10px;
+      margin: 8px 0;
+      cursor: pointer;
+      transition: background 0.2s;
+      text-align: center;
+    }
+    .language:hover, .option:hover {
+      background: #d6f5e3;
+    }
+    .correct { background: #b2f2bb !important; }
+    .incorrect { background: #ffc9c9 !important; }
+    .feedback { margin-top: 20px; font-weight: bold; min-height: 20px; }
+    #nextBtn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #1abc6c;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      display: none;
+    }
+    .progress { margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+
+<div class="card" id="mainCard">
+  <h2>¿Qué idioma quieres aprender?</h2>
+  <div id="languageList"></div>
+</div>
+
+<script>
+  const languages = ["Inglés", "Español", "Francés", "Alemán", "Italiano"];
+
+  const lessons = {
+    Español: [
+      { text: '¿Cómo se dice "dog" en español?', options: ['Gato', 'Perro', 'Pájaro', 'Caballo'], correct: 1 },
+      { text: '¿Cómo se dice "apple" en español?', options: ['Plátano', 'Manzana', 'Naranja'], correct: 1 },
+      { text: '¿Cómo se dice "house" en español?', options: ['Casa', 'Carro', 'Puerta'], correct: 0 }
+    ],
+    Inglés: [
+      { text: '¿Cómo se dice "gracias" en inglés?', options: ['Thanks', 'Hello', 'Please', 'Sorry'], correct: 0 }
+    ],
+    Francés: [
+      { text: '¿Cómo se dice "bonjour" en español?', options: ['Buenas noches', 'Hola', 'Adiós', 'Gracias'], correct: 1 }
+    ],
+    Alemán: [
+      { text: '¿Qué significa "hund"?', options: ['Perro', 'Casa', 'Libro', 'Auto'], correct: 0 }
+    ],
+    Italiano: [
+      { text: '¿Cómo se dice "ciao" en español?', options: ['Hola', 'Adiós', 'Gracias', 'Por favor'], correct: 0 }
+    ]
+  };
+
+  let current = 0;
+  let currentLesson = [];
+  let answered = false;
+
+  const languageListDiv = document.getElementById('languageList');
+  languages.forEach(lang => {
+    const div = document.createElement("div");
+    div.className = "language";
+    div.textContent = lang;
+    div.onclick = () => startLesson(lang);
+    languageListDiv.appendChild(div);
+  });
+
+  function startLesson(language) {
+    if (!lessons[language]) {
+      alert("¡Pronto añadiremos lecciones para " + language + "!");
+      return;
+    }
+
+    currentLesson = lessons[language];
+    current = 0;
+    document.getElementById('mainCard').innerHTML = `
+      <div class="progress" id="progress">Pregunta 1 de ${currentLesson.length}</div>
+      <h2 id="question"></h2>
+      <div id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button id="nextBtn" onclick="nextQuestion()">Siguiente</button>
+    `;
+    loadQuestion();
+  }
+
+  function loadQuestion() {
+    const q = currentLesson[current];
+    document.getElementById("question").textContent = q.text;
+    document.getElementById("progress").textContent = `Pregunta ${current + 1} de ${currentLesson.length}`;
+    const optionsDiv = document.getElementById("options");
+    optionsDiv.innerHTML = '';
+    q.options.forEach((opt, idx) => {
+      const div = document.createElement("div");
+      div.className = "option";
+      div.textContent = opt;
+      div.onclick = () => checkAnswer(div, idx === q.correct);
+      optionsDiv.appendChild(div);
+    });
+    document.getElementById("feedback").textContent = '';
+    document.getElementById("nextBtn").style.display = "none";
+    answered = false;
+  }
+
+  function checkAnswer(element, isCorrect) {
+    if (answered) return;
+    answered = true;
+    element.classList.add(isCorrect ? "correct" : "incorrect");
+    const correctOption = currentLesson[current].options[currentLesson[current].correct];
+    document.getElementById("feedback").textContent = isCorrect
+      ? "¡Correcto!"
+      : `Incorrecto. La respuesta correcta es "${correctOption}".`;
+    document.getElementById("nextBtn").style.display = "inline-block";
+  }
+
+  function nextQuestion() {
+    current++;
+    if (current < currentLesson.length) {
+      loadQuestion();
+    } else {
+      document.getElementById('mainCard').innerHTML = `
+        <h2>¡Lección completada!</h2>
+        <p>Has terminado todas las preguntas. ¡Buen trabajo!</p>
+        <button onclick="location.reload()">Volver al inicio</button>
+      `;
+    }
+  }
+</script>
+
+</body>
+</html>
